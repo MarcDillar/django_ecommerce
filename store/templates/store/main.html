@@ -14,6 +14,37 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+
+    <script type="text/javascript">
+      var user = '{{request.user}}'
+      function getToken(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+      }
+      csrftoken = getToken('csrftoken');
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      }
+
+      if (getCookie('cart') == undefined){
+        document.cookie = 'cart=' + JSON.stringify({}) + ';domain=;path=/'
+      }
+
+      var cart = JSON.parse(getCookie('cart'));
+    </script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -35,7 +66,7 @@
            <a href="{% url 'cart' %}">
             <img  id="cart-icon" src="{% static 'images/cart.png' %}">
           </a>
-          <p id="cart-total">0</p>
+          <p id="cart-total">{{cartItems}}</p>
     
         </div>
       </div>
@@ -60,5 +91,6 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
+    <script type="text/javascript" src="{% static 'js/cart.js' %}""></script>
   </body>
 </html>
